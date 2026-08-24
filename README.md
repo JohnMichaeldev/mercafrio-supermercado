@@ -2,6 +2,8 @@
 
 Site de pedidos online para o **Supermercado Mercafrio**, com catálogo de produtos, carrinho de compras, checkout via WhatsApp e painel administrativo completo.
 
+![Preview do Mercafrio](preview.jpg)
+
 **🔗 Demo ao vivo:** https://mercado-local-test-1.web.app
 
 ## 💡 Motivação
