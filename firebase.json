@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firestore.rules",
+      "**/.*",
+      "**/node_modules/**",
+      "*.bat",
+      "*.exe",
+      "*.pptx",
+      "*.pdf",
+      "*.xlsx",
+      "firebase",
+      "mercadofacil/**"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

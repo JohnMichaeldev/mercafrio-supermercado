@@ -1,0 +1,7 @@
+*.bat
+*.exe
+*.pptx
+*.pdf
+*.xlsx
+firebase
+deploy.bat

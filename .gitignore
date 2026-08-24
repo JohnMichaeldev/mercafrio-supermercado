@@ -1,0 +1,20 @@
+# Firebase local cache
+.firebase/
+
+# Temp/system junk
+.fuse_hidden*
+*.bak
+*.bak-*
+
+# Sub-projects tracked as their own repos
+mercadofacil/
+farmacia/
+farmacia-template/
+
+# Business/planning docs (not code)
+*.pptx
+*.pdf
+*.xlsx
+checklist_projeto_mercado.md
+funcionalidades_mercafrio.md
+proposta_mercafrio.png

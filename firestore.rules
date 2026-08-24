@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() { return request.auth != null; }
+
+    // Catálogo e avisos: todos leem, só admin escreve
+    match /produtos/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /avisos/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Contador do número de pedido: cliente precisa incrementar.
+    // Só deixa escrever um número inteiro que seja exatamente +1 em relação ao
+    // valor atual (ou 1, na primeiríssima vez) — impede alguém escrever um valor
+    // qualquer aí e bagunçar a numeração dos pedidos futuros.
+    match /config/contadores {
+      allow read: if true;
+      allow write: if request.resource.data.pedidos is int &&
+        (resource == null
+          ? request.resource.data.pedidos <= 1
+          : request.resource.data.pedidos == resource.data.pedidos + 1);
+    }
+    // Toda a config (loja, banners, categorias, etc.): todos leem, só admin escreve
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Visitas: cliente registra; só admin lê as estatísticas.
+    // O documento só pode ter o campo "ts" (nada de dado extra sendo injetado) e
+    // o horário tem que bater com o momento real da requisição — evita lixo/dado
+    // fabricado indo pra estatística de visitantes.
+    match /visitas/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['ts']) &&
+        request.resource.data.ts is int &&
+        request.resource.data.ts <= request.time.toMillis() + 60000 &&
+        request.resource.data.ts >= request.time.toMillis() - 300000;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Segredos (ex: chave da API do ImgBB): só admin lê e escreve — nunca público,
+    // diferente de /config que o site do cliente também precisa ler.
+    match /segredos/{doc} {
+      allow read, write: if isAdmin();
+    }
+
+    // Pedidos: cliente cria/acompanha/edita; só admin apaga
+    // Camada 2: leitura de um pedido específico (get) é livre — mas só quem já
+    // sabe o ID exato consegue abrir. Listar/varrer a coleção inteira (list)
+    // é só pra admin — assim ninguém consegue enumerar os pedidos de outros clientes.
+    match /pedidos/{id} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update: if true;
+      allow delete: if isAdmin();
+    }
+  }
+}
